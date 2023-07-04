@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:faro_dart/faro_dart.dart';
-import 'package:faro_dart/src/model/Meta.dart';
+import 'package:faro_dart/src/model/meta.dart';
 import 'package:test/test.dart';
 
 void main() {

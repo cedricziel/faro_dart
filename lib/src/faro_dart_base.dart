@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:faro_dart/src/model/Event.dart';
-import 'package:faro_dart/src/model/Meta.dart';
-import 'package:faro_dart/src/model/Payload.dart';
-import 'package:faro_dart/src/model/View.dart';
+import 'package:faro_dart/src/model/event.dart';
+import 'package:faro_dart/src/model/meta.dart';
+import 'package:faro_dart/src/model/sayload.dart';
+import 'package:faro_dart/src/model/view.dart';
 import 'package:synchronized/synchronized.dart';
 
 class Faro {

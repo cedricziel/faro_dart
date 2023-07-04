@@ -1,5 +1,5 @@
-import 'Event.dart';
-import 'Meta.dart';
+import 'event.dart';
+import 'meta.dart';
 
 class Payload {
   List<Event> events = [];

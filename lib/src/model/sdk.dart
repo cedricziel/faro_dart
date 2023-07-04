@@ -1,4 +1,4 @@
-import 'Integrations.dart';
+import 'integrations.dart';
 
 class Sdk {
   String name = "";
