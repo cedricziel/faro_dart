@@ -9,7 +9,6 @@ import 'package:synchronized/synchronized.dart';
 
 class Faro {
   static const String userAgent = "faro-dart/0.1";
-  static final Finalizer<Faro> _finalizer = Finalizer((faro) => faro.close());
   static const interval = Duration(milliseconds: 100);
 
   Lock lock = Lock();
