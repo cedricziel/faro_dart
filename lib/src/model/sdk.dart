@@ -22,9 +22,7 @@ class Sdk {
     final map = <String, dynamic>{};
     map['name'] = name;
     map['version'] = version;
-    if (integrations != null) {
-      map['integrations'] = integrations.map((v) => v.toJson()).toList();
-    }
+    map['integrations'] = integrations.map((v) => v.toJson()).toList();
     return map;
   }
 }
