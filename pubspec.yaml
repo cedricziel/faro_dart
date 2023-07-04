@@ -1,5 +1,5 @@
 name: faro_dart
-description: A starting point for Dart libraries or applications.
+description: Grafana Faro but for dart
 version: 0.0.1
 homepage: https://github.com/cedricziel/faro_dart
 repository: https://github.com/cedricziel/faro_dart
