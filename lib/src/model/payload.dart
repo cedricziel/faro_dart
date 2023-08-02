@@ -1,12 +1,18 @@
 import 'event.dart';
+import 'log.dart';
+import 'measurement.dart';
 import 'meta.dart';
 
 class Payload {
   List<Event> events = [];
+  List<Log> logs = [];
+  List<Measurement> measurements = [];
+
   Meta? meta;
 
   Payload(this.meta) {
     events = [];
+    measurements = [];
   }
 
   Payload.fromJson(dynamic json) {
@@ -23,6 +29,8 @@ class Payload {
     final map = <String, dynamic>{};
 
     map['events'] = events.map((v) => v.toJson()).toList();
+    map['logs'] = logs.map((v) => v.toJson()).toList();
+    map['measurements'] = measurements.map((v) => v.toJson()).toList();
 
     if (meta != null) {
       map['meta'] = meta!.toJson();

@@ -1,7 +1,15 @@
-class Session {
-  String? id;
+import 'package:uuid/uuid.dart';
 
-  Session(this.id);
+class Session {
+  late String id;
+
+  Session() {
+    id = Uuid().v4().toString();
+  }
+
+  Session.resume(String id) {
+    id = id;
+  }
 
   Session.fromJson(dynamic json) {
     id = json['id'] ?? "";
