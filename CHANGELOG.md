@@ -1,3 +1,7 @@
+## 0.0.4
+
+- Drop dependency on `uuid`
+
 ## 0.0.3
 
 - Add log events
