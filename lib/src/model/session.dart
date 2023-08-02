@@ -1,10 +1,10 @@
-import 'package:uuid/uuid.dart';
+import '../util.dart';
 
 class Session {
   late String id;
 
   Session() {
-    id = Uuid().v4().toString();
+    id = getRandomString(10);
   }
 
   Session.resume(String id) {
