@@ -21,6 +21,7 @@ class Meta {
     this.browser,
     this.page,
   }) {
+    session = session ?? Session();
     sdk = sdk ?? Sdk("faro_dart", "0.0.1", []);
   }
 
