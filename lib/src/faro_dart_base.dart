@@ -66,7 +66,7 @@ class Faro {
     _payload.events.add(event);
   }
 
-  pushMeasurement(String name, String value) {
+  pushMeasurement(String name, num value) {
     if (!ticker.isActive) {
       return;
     }
@@ -98,9 +98,14 @@ class Faro {
       try {
         HttpClientRequest req = await httpClient.postUrl(endpoint);
         req.headers.add("User-Agent", userAgent);
-        req.write(jsonEncode(_payload.toJson()));
+        req.headers.add("Content-Type", "application/json");
+        var json = jsonEncode(_payload.toJson());
+        req.write(json);
 
-        await req.close();
+        HttpClientResponse response = await req.close();
+        print(json);
+        print(response.statusCode);
+        print(response.reasonPhrase);
       } finally {
         _payload = Payload(meta);
       }

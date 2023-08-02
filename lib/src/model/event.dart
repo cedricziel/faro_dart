@@ -2,7 +2,7 @@ class Event {
   String name = "";
   String domain = "foo";
   dynamic attributes = {};
-  String timestamp = DateTime.now().toIso8601String();
+  DateTime timestamp = DateTime.now();
 
   Event(this.name, {this.attributes});
 
@@ -19,7 +19,7 @@ class Event {
     map['name'] = name;
     map['domain'] = domain;
     map['attributes'] = attributes;
-    map['timestamp'] = timestamp;
+    map['timestamp'] = timestamp.toUtc().toIso8601String();
 
     return map;
   }

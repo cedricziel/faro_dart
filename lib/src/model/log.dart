@@ -9,7 +9,7 @@ class Log {
   Map<String, dynamic> toJson() {
     return {
       "message": message,
-      "timestamp": timestamp.toIso8601String(),
+      "timestamp": timestamp.toUtc().toIso8601String(),
     };
   }
 }

@@ -5,7 +5,7 @@ import 'package:faro_dart/src/model/app.dart';
 import 'package:faro_dart/src/model/event.dart';
 import 'package:faro_dart/src/model/meta.dart';
 
-void main() {
+Future<void> main() async {
   var app = App("my-app", "0.0.1", "dev");
   var meta = Meta(app: app);
   var faro = Faro(Uri.parse("https://foo/bar"), meta, HttpClient());
@@ -17,7 +17,7 @@ void main() {
   faro.pushLog("delay");
 
   // push a measurement
-  faro.pushMeasurement("delay", "2");
+  faro.pushMeasurement("delay", 2);
 
   // push an event
   faro.pushEvent(Event("cta", attributes: {
@@ -25,11 +25,11 @@ void main() {
   }));
 
   // pause recording
-  faro.pause();
+  await faro.pause();
 
   // unpause recording
-  faro.unpause();
+  await faro.unpause();
 
   // force draining the buffer
-  faro.drain();
+  await faro.drain();
 }

@@ -20,7 +20,9 @@ class Meta {
     this.view,
     this.browser,
     this.page,
-  });
+  }) {
+    sdk = sdk ?? Sdk("faro_dart", "0.0.1", []);
+  }
 
   Meta.fromJson(dynamic json) {
     session =
