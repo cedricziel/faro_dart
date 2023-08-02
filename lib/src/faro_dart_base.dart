@@ -102,10 +102,7 @@ class Faro {
         var json = jsonEncode(_payload.toJson());
         req.write(json);
 
-        HttpClientResponse response = await req.close();
-        print(json);
-        print(response.statusCode);
-        print(response.reasonPhrase);
+        await req.close();
       } finally {
         _payload = Payload(meta);
       }

@@ -45,7 +45,7 @@ void main() {
         expect(body, contains("measurements"));
         expect(body['measurements'][0], contains("values"));
         expect(
-            body['measurements'][0]['values'], containsPair('my-measure', '2'));
+            body['measurements'][0]['values'], containsPair('my-measure', 2));
 
         return shelf.Response.ok("",
             headers: {"content-type": "application/json"});
@@ -62,7 +62,7 @@ void main() {
         'foo': 'bar',
       }));
 
-      faro.pushMeasurement('my-measure', "2");
+      faro.pushMeasurement('my-measure', 2);
 
       faro.pushLog('my-log');
 
