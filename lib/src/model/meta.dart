@@ -14,19 +14,22 @@ class Meta {
   Page? page;
 
   Meta({
-      this.session, 
-      this.sdk, 
-      this.app, 
-      this.view, 
-      this.browser, 
-      this.page,});
+    this.session,
+    this.sdk,
+    this.app,
+    this.view,
+    this.browser,
+    this.page,
+  });
 
   Meta.fromJson(dynamic json) {
-    session = json['session'] != null ? Session.fromJson(json['session']) : null;
+    session =
+        json['session'] != null ? Session.fromJson(json['session']) : null;
     sdk = json['sdk'] != null ? Sdk.fromJson(json['sdk']) : null;
     app = json['app'] != null ? App.fromJson(json['app']) : null;
     view = json['view'] != null ? View.fromJson(json['view']) : null;
-    browser = json['browser'] != null ? Browser.fromJson(json['browser']) : null;
+    browser =
+        json['browser'] != null ? Browser.fromJson(json['browser']) : null;
     page = json['page'] != null ? Page.fromJson(json['page']) : null;
   }
 
@@ -52,5 +55,4 @@ class Meta {
     }
     return map;
   }
-
 }

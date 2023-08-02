@@ -19,7 +19,6 @@ class Payload {
     meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
   }
 
-
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
 
@@ -30,5 +29,4 @@ class Payload {
     }
     return map;
   }
-
 }

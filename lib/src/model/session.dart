@@ -7,7 +7,6 @@ class Session {
     id = json['id'] ?? "";
   }
 
-
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
     map['id'] = id;
