@@ -1,3 +1,7 @@
+## 0.0.5
+
+- Add ability to push errors
+
 ## 0.0.4
 
 - Drop dependency on `uuid`
