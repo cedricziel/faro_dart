@@ -1,6 +1,6 @@
 name: faro_dart
 description: Grafana Faro but for dart
-version: 0.0.4
+version: 0.0.5
 homepage: https://github.com/cedricziel/faro_dart
 repository: https://github.com/cedricziel/faro_dart
 
