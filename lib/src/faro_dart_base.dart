@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:faro_dart/src/model/event.dart';
+import 'package:faro_dart/src/model/exception.dart';
 import 'package:faro_dart/src/model/meta.dart';
 import 'package:faro_dart/src/model/payload.dart';
 import 'package:faro_dart/src/model/view.dart';
@@ -81,7 +82,12 @@ class Faro {
       return;
     }
 
-    lock.synchronized(() => _payload.meta?.view = View(view));
+    lock.synchronized(() {
+      _payload.meta?.view = View(view);
+      _payload.events.add(Event('view_changed', attributes: {
+        'name': view,
+      }));
+    });
   }
 
   drain() async {
@@ -107,5 +113,14 @@ class Faro {
         _payload = Payload(meta);
       }
     });
+  }
+
+  void pushError(Object error, {StackTrace? stackTrace}) {
+    if (error is String) {
+      lock.synchronized(() {
+        _payload.exceptions
+            .add(FaroException.fromString(error, stackTrace: stackTrace));
+      });
+    }
   }
 }

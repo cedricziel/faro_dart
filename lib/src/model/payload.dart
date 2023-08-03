@@ -1,10 +1,12 @@
 import 'event.dart';
+import 'exception.dart';
 import 'log.dart';
 import 'measurement.dart';
 import 'meta.dart';
 
 class Payload {
   List<Event> events = [];
+  List<FaroException> exceptions = [];
   List<Log> logs = [];
   List<Measurement> measurements = [];
 
@@ -29,6 +31,7 @@ class Payload {
     final map = <String, dynamic>{};
 
     map['events'] = events.map((v) => v.toJson()).toList();
+    map['exceptions'] = exceptions.map((v) => v.toJson()).toList();
     map['logs'] = logs.map((v) => v.toJson()).toList();
     map['measurements'] = measurements.map((v) => v.toJson()).toList();
 

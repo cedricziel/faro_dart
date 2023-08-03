@@ -47,6 +47,21 @@ void main() {
         expect(
             body['measurements'][0]['values'], containsPair('my-measure', 2));
 
+        // Test exceptions
+        expect(body, contains("exceptions"));
+        expect(body['exceptions'][0], contains("stacktrace"));
+        expect(body['exceptions'][0]['stacktrace'], contains('frames'));
+        expect(body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair('function', 'Declarer.test.<fn>'));
+        expect(body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair('module', 'test_api'));
+        expect(body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair('filename', 'package:test_api/src/backend/declarer.dart'));
+        expect(body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair('lineno', 213));
+        expect(body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair('colno', 7));
+
         return shelf.Response.ok("",
             headers: {"content-type": "application/json"});
       });
@@ -65,6 +80,14 @@ void main() {
       faro.pushMeasurement('my-measure', 2);
 
       faro.pushLog('my-log');
+
+      faro.pushView("home");
+
+      try {
+        throw 'foo!';
+      } catch (e, s) {
+        faro.pushError(e, stackTrace: s);
+      }
 
       await faro.drain();
     });
