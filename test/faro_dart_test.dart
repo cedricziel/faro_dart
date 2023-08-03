@@ -55,8 +55,10 @@ void main() {
             containsPair('function', 'Declarer.test.<fn>'));
         expect(body['exceptions'][0]['stacktrace']['frames'][2],
             containsPair('module', 'test_api'));
-        expect(body['exceptions'][0]['stacktrace']['frames'][2],
-            containsPair('filename', 'package:test_api/src/backend/declarer.dart'));
+        expect(
+            body['exceptions'][0]['stacktrace']['frames'][2],
+            containsPair(
+                'filename', 'package:test_api/src/backend/declarer.dart'));
         expect(body['exceptions'][0]['stacktrace']['frames'][2],
             containsPair('lineno', 213));
         expect(body['exceptions'][0]['stacktrace']['frames'][2],
