@@ -24,6 +24,13 @@ Future<void> main() async {
     "foo": "bar",
   }));
 
+  // push an error
+  try {
+    throw 'foo!';
+  } catch (e, s) {
+    faro.pushError(e, stackTrace: s);
+  }
+
   // pause recording
   await faro.pause();
 
