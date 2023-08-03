@@ -24,6 +24,8 @@ Future<void> main() async {
     "foo": "bar",
   }));
 
+  faro.pushView("home");
+
   // push an error
   try {
     throw 'foo!';
