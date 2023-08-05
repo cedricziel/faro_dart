@@ -40,4 +40,6 @@ class Payload {
     }
     return map;
   }
+
+  Payload.empty();
 }

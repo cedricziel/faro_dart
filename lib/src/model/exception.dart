@@ -9,6 +9,7 @@ class FaroException {
 
   FaroException.fromString(this.value, {StackTrace? stackTrace}) {
     timestamp = DateTime.now();
+    type = "Error";
 
     if (stackTrace != null) {
       this.stackTrace = FaroStacktrace(stackTrace);
@@ -18,7 +19,8 @@ class FaroException {
   Map<String, dynamic> toJson() {
     return {
       "timestamp": timestamp.toUtc().toIso8601String(),
-      "kind": "exception",
+      "type": type,
+      "value": value,
       "stacktrace": stackTrace?.toJson(),
     };
   }

@@ -6,39 +6,45 @@ import 'package:faro_dart/src/model/event.dart';
 import 'package:faro_dart/src/model/meta.dart';
 
 Future<void> main() async {
-  var app = App("my-app", "0.0.1", "dev");
-  var meta = Meta(app: app);
-  var faro = Faro(Uri.parse("https://foo/bar"), meta, HttpClient());
+  await Faro.init(
+    (options) {
+      var app = App("my-app", "0.0.1", "dev");
 
-  // init emits a session_start event
-  faro.init();
+      options.collectorUrl = Uri.parse('https://your-collector.com/collector');
+      options.meta = Meta(app: app);
+    },
+    // Init your App.
+    appRunner: () async => await realMain(),
+  );
+}
 
+realMain() async {
   // push a log message
-  faro.pushLog("delay");
+  Faro.pushLog("delay");
 
   // push a measurement
-  faro.pushMeasurement("delay", 2);
+  Faro.pushMeasurement("delay", 2);
 
   // push an event
-  faro.pushEvent(Event("cta", attributes: {
+  Faro.pushEvent(Event("cta", attributes: {
     "foo": "bar",
   }));
 
-  faro.pushView("home");
+  Faro.pushView("home");
 
   // push an error
   try {
     throw 'foo!';
   } catch (e, s) {
-    faro.pushError(e, stackTrace: s);
+    Faro.pushError(e, stackTrace: s);
   }
 
   // pause recording
-  await faro.pause();
+  await Faro.pause();
 
   // unpause recording
-  await faro.unpause();
+  await Faro.unpause();
 
   // force draining the buffer
-  await faro.drain();
+  await Faro.drain();
 }
