@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:faro_dart/faro_dart.dart';
 import 'package:faro_dart/src/model/app.dart';
@@ -68,30 +67,33 @@ void main() {
             headers: {"content-type": "application/json"});
       });
 
-      var url = Uri.parse("${server.url}/collect/foo-bar");
       var meta = Meta(
         app: App("foo", "0.0.1", "dev"),
         session: Session(),
       );
 
-      final faro = Faro(url, meta, HttpClient());
-      faro.pushEvent(Event('custom', attributes: {
+      Faro.init((settings) {
+        settings.collectorUrl = Uri.parse("${server.url}/collect/foo-bar");
+        settings.meta = meta;
+      });
+
+      Faro.pushEvent(Event('custom', attributes: {
         'foo': 'bar',
       }));
 
-      faro.pushMeasurement('my-measure', 2);
+      Faro.pushMeasurement('my-measure', 2);
 
-      faro.pushLog('my-log');
+      Faro.pushLog('my-log');
 
-      faro.pushView("home");
+      Faro.pushView("home");
 
       try {
         throw 'foo!';
       } catch (e, s) {
-        faro.pushError(e, stackTrace: s);
+        Faro.pushError(e, stackTrace: s);
       }
 
-      await faro.drain();
+      await Faro.drain();
     });
   });
 }

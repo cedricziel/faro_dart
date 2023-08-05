@@ -2,123 +2,183 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:faro_dart/src/faro_settings.dart';
 import 'package:faro_dart/src/model/event.dart';
 import 'package:faro_dart/src/model/exception.dart';
-import 'package:faro_dart/src/model/meta.dart';
 import 'package:faro_dart/src/model/payload.dart';
 import 'package:faro_dart/src/model/view.dart';
+import 'package:meta/meta.dart';
 import 'package:synchronized/synchronized.dart';
 
 import 'model/log.dart';
 import 'model/measurement.dart';
+
+typedef SettingsConfiguration = FutureOr<void> Function(FaroSettings);
+
+typedef AppRunner = FutureOr<void> Function();
 
 class Faro {
   static const String userAgent = "faro-dart/0.1";
   static const interval = Duration(milliseconds: 100);
 
   Lock lock = Lock();
+  FaroSettings currentSettings = FaroSettings();
+  Timer ticker = Timer(interval, () {});
+  Payload _payload = Payload.empty();
+  bool initialized = false;
 
-  Uri endpoint;
+  static Faro? _instance;
 
-  // app meta
-  Meta meta;
-  HttpClient httpClient;
-
-  late Timer ticker;
-  late Payload _payload;
-
-  Faro(this.endpoint, this.meta, this.httpClient) {
-    ticker = Timer.periodic(interval, (Timer t) => _tick);
-    _payload = Payload(meta);
+  static Faro get instance {
+    _instance ??= Faro._();
+    return _instance!;
   }
 
-  init() async {
-    await pushEvent(Event("session_started"));
+  Faro._();
+
+  static Future<void> init(SettingsConfiguration settingsConfiguration,
+      {AppRunner? appRunner, @internal FaroSettings? settings}) async {
+    final faroSettings = settings ?? FaroSettings();
+
+    try {
+      final config = settingsConfiguration(faroSettings);
+      if (config is Future) {
+        await config;
+      }
+    } catch (exception) {
+      // do nothing
+    }
+
+    if (faroSettings.collectorUrl == null) {
+      throw ArgumentError('`faroSettings.collectorUrl` has to be set');
+    }
+
+    _init(faroSettings, appRunner);
+  }
+
+  static _init(FaroSettings settings, AppRunner? appRunner) async {
+    await Faro.pushEvent(Event("session_started"));
+
+    instance.initialized = true;
+    instance.currentSettings = settings;
+
+    if (appRunner != null) {
+      await appRunner();
+    }
   }
 
   // stop ticking after one more :)
-  pause() async {
-    lock.synchronized(() => _tick);
+  static pause() async {
+    if (!instance.initialized) {
+      return;
+    }
 
-    ticker.cancel();
+    instance.lock.synchronized(() => tick);
+
+    instance.ticker.cancel();
   }
 
-  unpause() async {
-    ticker = Timer.periodic(interval, (Timer t) => _tick);
+  static unpause() async {
+    if (!instance.initialized) {
+      return;
+    }
+
+    instance.ticker = Timer.periodic(interval, (Timer t) => tick);
   }
 
   void close() {
-    httpClient.close();
+    currentSettings.httpClient.close();
   }
 
-  pushLog(String message) {
-    if (!ticker.isActive) {
+  static pushLog(String message) {
+    if (!instance.initialized) {
       return;
     }
 
-    _payload.logs.add(Log(message));
-  }
-
-  pushEvent(Event event) async {
-    if (!ticker.isActive) {
+    if (!instance.ticker.isActive) {
       return;
     }
 
-    _payload.events.add(event);
+    instance._payload.logs.add(Log(message));
   }
 
-  pushMeasurement(String name, num value) {
-    if (!ticker.isActive) {
+  static pushEvent(Event event) async {
+    if (!instance.initialized) {
       return;
     }
 
-    _payload.measurements.add(Measurement(name, value));
-  }
-
-  pushPayload(Payload payload) {}
-
-  pushView(String view) {
-    if (!ticker.isActive) {
+    if (!instance.ticker.isActive) {
       return;
     }
 
-    lock.synchronized(() {
-      _payload.meta?.view = View(view);
-      _payload.events.add(Event('view_changed', attributes: {
+    instance._payload.events.add(event);
+  }
+
+  static pushMeasurement(String name, num value) {
+    if (!instance.initialized) {
+      return;
+    }
+
+    if (!instance.ticker.isActive) {
+      return;
+    }
+
+    instance._payload.measurements.add(Measurement(name, value));
+  }
+
+  static pushView(String view) {
+    if (!instance.initialized) {
+      return;
+    }
+
+    if (!instance.ticker.isActive) {
+      return;
+    }
+
+    instance.lock.synchronized(() {
+      instance._payload.meta?.view = View(view);
+      instance._payload.events.add(Event('view_changed', attributes: {
         'name': view,
       }));
     });
   }
 
-  drain() async {
-    await _tick();
+  static drain() async {
+    await Faro.tick();
   }
 
-  _tick() async {
-    await lock.synchronized(() async {
+  @internal
+  static tick() async {
+    if (!instance.initialized) {
+      return;
+    }
+
+    await instance.lock.synchronized(() async {
       // bail if no events
-      if (_payload.events.isEmpty) {
+      if (instance._payload.events.isEmpty) {
         return;
       }
 
       try {
-        HttpClientRequest req = await httpClient.postUrl(endpoint);
+        Uri url = instance.currentSettings.collectorUrl!;
+        HttpClientRequest req =
+            await instance.currentSettings.httpClient.postUrl(url);
         req.headers.add("User-Agent", userAgent);
         req.headers.add("Content-Type", "application/json");
-        var json = jsonEncode(_payload.toJson());
+        var json = jsonEncode(instance._payload.toJson());
         req.write(json);
 
         await req.close();
       } finally {
-        _payload = Payload(meta);
+        instance._payload = Payload(instance.currentSettings.meta);
       }
     });
   }
 
-  void pushError(Object error, {StackTrace? stackTrace}) {
+  static void pushError(Object error, {StackTrace? stackTrace}) {
     if (error is String) {
-      lock.synchronized(() {
-        _payload.exceptions
+      instance.lock.synchronized(() {
+        instance._payload.exceptions
             .add(FaroException.fromString(error, stackTrace: stackTrace));
       });
     }
