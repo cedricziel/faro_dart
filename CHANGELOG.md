@@ -1,3 +1,7 @@
+## 0.1.0
+
+- Refactor API to static calls
+
 ## 0.0.5
 
 - Add ability to push errors
