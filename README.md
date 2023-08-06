@@ -2,6 +2,10 @@
 
 Grafana Faro, but for Dart (and flutter).
 
+## Disclaimer
+
+This project is neither endorsed nor supported by Grafana Labs.
+
 ## Usage
 
 See `./example/faro_dart_example.dart`
