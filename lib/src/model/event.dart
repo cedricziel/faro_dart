@@ -1,6 +1,6 @@
 class Event {
   String name = "";
-  String domain = "foo";
+  String domain = "flutter";
   dynamic attributes = {};
   DateTime timestamp = DateTime.now();
 
