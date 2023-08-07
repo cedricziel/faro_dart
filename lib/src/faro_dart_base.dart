@@ -62,10 +62,6 @@ class Faro {
     instance.ticker = Timer.periodic(interval, (Timer t) => Faro.tick());
 
     await Faro.pushEvent(Event("session_started"));
-
-    instance.initialized = true;
-    instance.currentSettings = settings;
-
     if (appRunner != null) {
       await appRunner();
     }
@@ -159,7 +155,10 @@ class Faro {
 
     await instance.lock.synchronized(() async {
       // bail if no events
-      if (instance._payload.events.isEmpty) {
+      if (instance._payload.events.isEmpty &&
+          instance._payload.exceptions.isEmpty &&
+          instance._payload.logs.isEmpty &&
+          instance._payload.measurements.isEmpty) {
         return;
       }
 
