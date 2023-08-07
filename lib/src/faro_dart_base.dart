@@ -57,6 +57,10 @@ class Faro {
   }
 
   static _init(FaroSettings settings, AppRunner? appRunner) async {
+    instance.initialized = true;
+    instance.currentSettings = settings;
+    instance.ticker = Timer.periodic(interval, (Timer t) => Faro.tick());
+
     await Faro.pushEvent(Event("session_started"));
 
     instance.initialized = true;
