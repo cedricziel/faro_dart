@@ -27,6 +27,11 @@ class Faro {
   Payload _payload = Payload.empty();
   bool initialized = false;
 
+  @internal
+  set payload(Payload p) {
+    _payload = p;
+  }
+
   static Faro? _instance;
 
   static Faro get instance {
@@ -60,6 +65,7 @@ class Faro {
     instance.initialized = true;
     instance.currentSettings = settings;
     instance.ticker = Timer.periodic(interval, (Timer t) => Faro.tick());
+    instance.payload = Payload(instance.currentSettings.meta);
 
     await Faro.pushEvent(Event("session_started"));
     if (appRunner != null) {
