@@ -4,5 +4,6 @@
 library;
 
 export 'src/faro_dart_base.dart';
+export 'src/faro_settings.dart';
 
-// TODO: Export any libraries intended for clients of this package.
+export 'src/model/event.dart';
