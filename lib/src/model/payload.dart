@@ -12,10 +12,7 @@ class Payload {
 
   Meta? meta;
 
-  Payload(this.meta) {
-    events = [];
-    measurements = [];
-  }
+  Payload(this.meta);
 
   Payload.fromJson(dynamic json) {
     if (json['events'] != null) {
