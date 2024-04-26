@@ -1,3 +1,5 @@
+import 'package:faro_dart/src/model/trace.dart';
+
 import 'event.dart';
 import 'exception.dart';
 import 'log.dart';
@@ -9,20 +11,11 @@ class Payload {
   List<FaroException> exceptions = [];
   List<Log> logs = [];
   List<Measurement> measurements = [];
+  Trace? traces;
 
   Meta? meta;
 
   Payload(this.meta);
-
-  Payload.fromJson(dynamic json) {
-    if (json['events'] != null) {
-      events = [];
-      json['events'].forEach((v) {
-        events.add(Event.fromJson(v));
-      });
-    }
-    meta = json['meta'] != null ? Meta.fromJson(json['meta']) : null;
-  }
 
   Map<String, dynamic> toJson() {
     final map = <String, dynamic>{};
@@ -31,10 +24,9 @@ class Payload {
     map['exceptions'] = exceptions.map((v) => v.toJson()).toList();
     map['logs'] = logs.map((v) => v.toJson()).toList();
     map['measurements'] = measurements.map((v) => v.toJson()).toList();
+    map['traces'] = traces?.toJson();
+    map['meta'] = meta?.toJson();
 
-    if (meta != null) {
-      map['meta'] = meta!.toJson();
-    }
     return map;
   }
 

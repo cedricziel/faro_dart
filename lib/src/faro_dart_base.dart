@@ -6,6 +6,7 @@ import 'package:faro_dart/src/faro_settings.dart';
 import 'package:faro_dart/src/model/event.dart';
 import 'package:faro_dart/src/model/exception.dart';
 import 'package:faro_dart/src/model/payload.dart';
+import 'package:faro_dart/src/model/trace.dart';
 import 'package:faro_dart/src/model/view.dart';
 import 'package:meta/meta.dart';
 import 'package:synchronized/synchronized.dart';
@@ -142,6 +143,9 @@ class Faro {
     }
 
     instance.lock.synchronized(() {
+      // set view for all events forthcoming
+      instance.currentSettings.meta.view = View(view);
+      // set view for current payload
       instance._payload.meta?.view = View(view);
       instance._payload.events.add(Event('view_changed', attributes: {
         'name': view,
@@ -164,7 +168,8 @@ class Faro {
       if (instance._payload.events.isEmpty &&
           instance._payload.exceptions.isEmpty &&
           instance._payload.logs.isEmpty &&
-          instance._payload.measurements.isEmpty) {
+          instance._payload.measurements.isEmpty &&
+          instance._payload.traces?.traceId == null) {
         return;
       }
 
@@ -177,7 +182,11 @@ class Faro {
         var json = jsonEncode(instance._payload.toJson());
         req.write(json);
 
-        await req.close();
+        var res = await req.close();
+
+        print("${res.statusCode} ${res.reasonPhrase}");
+      } catch (e) {
+        print(e);
       } finally {
         instance._payload = Payload(instance.currentSettings.meta);
       }
@@ -187,9 +196,21 @@ class Faro {
   static void pushError(Object error, {StackTrace? stackTrace}) {
     if (error is String) {
       instance.lock.synchronized(() {
-        instance._payload.exceptions
-            .add(FaroException.fromString(error, stackTrace: stackTrace));
+        instance._payload.exceptions.add(
+            FaroException.fromString(error, incomingStackTrace: stackTrace));
       });
     }
+    if (error is Exception) {
+      instance.lock.synchronized(() {
+        instance._payload.exceptions.add(
+            FaroException.fromException(error, incomingStackTrace: stackTrace));
+      });
+    }
+  }
+
+  static void pushTrace(Trace trace) {
+    instance.lock.synchronized(() {
+      instance._payload.traces = trace;
+    });
   }
 }

@@ -7,12 +7,22 @@ class FaroException {
   late DateTime timestamp;
   Map<String, String> context = {};
 
-  FaroException.fromString(this.value, {StackTrace? stackTrace}) {
+  FaroException.fromString(this.value, {StackTrace? incomingStackTrace}) {
     timestamp = DateTime.now();
     type = "Error";
 
-    if (stackTrace != null) {
-      this.stackTrace = FaroStacktrace(stackTrace);
+    if (incomingStackTrace != null) {
+      stackTrace = FaroStacktrace(incomingStackTrace);
+    }
+  }
+
+  FaroException.fromException(Exception e, {StackTrace? incomingStackTrace})
+      : value = e.toString() {
+    timestamp = DateTime.now();
+    type = "Exception";
+
+    if (incomingStackTrace != null) {
+      stackTrace = FaroStacktrace(incomingStackTrace);
     }
   }
 

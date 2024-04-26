@@ -51,3 +51,26 @@ Future<void> main() async {
   await Faro.drain();
 }
 ```
+
+## Tracking HTTP requests
+
+In order to track http requests that your app is sending,
+use the `FaroHttpClient` and it will automatically capture http requests as events.
+
+```dart
+// before
+var client = HttpClient();
+client.get("http://example.com");
+
+// after
+var client = FaroHttpClient();
+client.get("http://example.com");
+```
+
+If you want to re-use an existing outer http client, you can wrap it:
+
+```dart
+var myClient = HttpClient();
+var faroClient = FaroHttpClient(client: myClient);
+client.get("http://example.com");
+```
